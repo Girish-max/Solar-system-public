@@ -16,6 +16,7 @@ jobs:
     unit-testing:
         name: Unit Testing
         strategy:
+          fail-fast: false
           matrix:
             nodejs_version: [19, 20]
             operating_system: [ubuntu-latest, macos-latest]
