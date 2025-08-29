@@ -10,7 +10,11 @@ on:
 jobs:
   Unit-testing:
     name: Unit Testing
-    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+       nodejs_version: [18,19,20] 
+       operating_system: [ubuntu-latest,macos-latest]
+    runs-on: ${{matrix.operating_system}}   # operating system runs on above 16th line
 
     env:
       MONGO_URI: "mongodb+srv://supercluster.d83jj.mongodb.net/superData"
@@ -21,10 +25,10 @@ jobs:
       - name: Checkout Repository
         uses: actions/checkout@v4
 
-      - name: Setup Node.js 18
+      - name: Setup Node.js - ${{matrix.nodejs_version}}
         uses: actions/setup-node@v4
         with:
-          node-version: 18
+          node-version: ${{matrix.nodejs_version}}  # checks with multiple versions [18,19,20]
 
       - name: Install Dependencies
         run: npm install
@@ -32,7 +36,7 @@ jobs:
       - name: Run Tests
         run: npm test
 
-      - name: Archive Test Result
+      - name: Archive Test Result         # configure download test result
         uses: actions/upload-artifact@v4
         with:
            name: Mocha_Test-Result
