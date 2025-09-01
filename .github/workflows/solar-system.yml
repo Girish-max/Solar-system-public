@@ -73,12 +73,12 @@ jobs:
         cat coverage-summary.txt >> $GITHUB_STEP_SUMMARY
 
      - name: Archive Test Result
-      if: always()
-      uses: actions/upload-artifact@v4
-      with:
-        name: Code-Coverage-Result
-        path: coverage
-        retention-days: 5
+  if: always()
+  uses: actions/upload-artifact@v4
+  with:
+    name: Code-Coverage-Result
+    path: coverage
+    retention-days: 5
 
     
     
