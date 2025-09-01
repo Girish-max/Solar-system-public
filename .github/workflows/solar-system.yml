@@ -12,12 +12,12 @@ jobs:
     name: Unit Testing
     strategy:
       matrix:
-       nodejs_version: [18,19,20] 
-       operating_system: [ubuntu-latest,macos-latest]
-       exclude:
+        nodejs_version: [18, 19, 20]
+        operating_system: [ubuntu-latest, macos-latest]
+        exclude:
           - nodejs_version: 20  # exclude version nodejs v20 from macos-latest
             operating_system: macos-latest
-    runs-on: ${{matrix.operating_system}}   # operating system runs on above 16th line
+    runs-on: ${{ matrix.operating_system }}
 
     env:
       MONGO_URI: "mongodb+srv://supercluster.d83jj.mongodb.net/superData"
@@ -28,10 +28,10 @@ jobs:
       - name: Checkout Repository
         uses: actions/checkout@v4
 
-      - name: Setup Node.js - ${{matrix.nodejs_version}}
+      - name: Setup Node.js - ${{ matrix.nodejs_version }}
         uses: actions/setup-node@v4
         with:
-          node-version: ${{matrix.nodejs_version}}  # checks with multiple versions [18,19,20]
+          node-version: ${{ matrix.nodejs_version }}
 
       - name: Install Dependencies
         run: npm install
@@ -39,47 +39,43 @@ jobs:
       - name: Run Tests
         run: npm test
 
-      - name: Archive Test Result         # configure download test result
+      - name: Archive Test Result
         uses: actions/upload-artifact@v4
         with:
-           name: Mocha_Test-Result-${{ matrix.nodejs_version }}-${{ matrix.operating_system }} # download the test result with version number
-           path: test-results.xml
+          name: Mocha_Test-Result-${{ matrix.nodejs_version }}-${{ matrix.operating_system }}
+          path: test-results.xml
 
   code-coverage:
     name: Code Coverage
     runs-on: ubuntu-latest
     steps:
-     - name: Checkout Repository
-      uses: actions/checkout@v4
+      - name: Checkout Repository
+        uses: actions/checkout@v4
 
-     - name: Setup NodeJS Version - 18
-      uses: actions/setup-node@v3
-      with:
-        node-version: 18
+      - name: Setup NodeJS Version - 18
+        uses: actions/setup-node@v3
+        with:
+          node-version: 18
 
-     - name: Install Dependencies
-      run: npm install
+      - name: Install Dependencies
+        run: npm install
 
-     - name: Check Code Coverage
-      run: npm run coverage
-      continue-on-error: true
+      - name: Check Code Coverage
+        run: npm run coverage
+        continue-on-error: true
 
-     - name: Generate Coverage Summary
-      run: npx istanbul report text-summary > coverage-summary.txt
+      - name: Generate Coverage Summary
+        run: npx istanbul report text-summary > coverage-summary.txt
 
-     - name: Add Coverage to Job Summary
-      run: |
-        echo "### Code Coverage Report" >> $GITHUB_STEP_SUMMARY
-        cat coverage-summary.txt >> $GITHUB_STEP_SUMMARY
+      - name: Add Coverage to Job Summary
+        run: |
+          echo "### Code Coverage Report" >> $GITHUB_STEP_SUMMARY
+          cat coverage-summary.txt >> $GITHUB_STEP_SUMMARY
 
-     - name: Archive Test Result
-  if: always()
-  uses: actions/upload-artifact@v4
-  with:
-    name: Code-Coverage-Result
-    path: coverage
-    retention-days: 5
-
-    
-    
-    
+      - name: Archive Test Result
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: Code-Coverage-Result
+          path: coverage
+          retention-days: 5
